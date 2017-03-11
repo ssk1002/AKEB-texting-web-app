@@ -2,6 +2,11 @@ import urllib
 import urllib2
 import json
 import time
+from secret import *
+
+print API_KEY
+print API_SECRET
+exit(0)
 
 
 API_KEY = ""
