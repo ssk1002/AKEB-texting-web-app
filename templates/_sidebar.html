@@ -1,0 +1,32 @@
+<!-- Sidebar -->
+<div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+        <li class="sidebar-brand">
+            <a href="/">AKEB Texting Appliction</a>
+        </li>
+        {% if not logged_in %}
+            <li>
+                <a href="/index">Home</a>
+            </li>
+            <li>
+                <a href="/login">Login</a>
+            </li>
+        {% endif %}
+        {% if logged_in %}
+            <li>
+                <a href="/home">Texting Home</a>
+            </li>
+            <li>
+                <a href="/logout">Logout</a>
+            </li>
+            <li>
+                <a href="/view_contacts">View Contacts/Groups</a>
+            </li>
+            <li>
+                <a href="/add_contacts">Add Contacts/Groups</a>
+            </li>
+            
+        {% endif %}
+    </ul>
+</div>
+<!-- /#sidebar-wrapper -->
