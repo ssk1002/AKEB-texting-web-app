@@ -21,8 +21,14 @@
                     <p class="error"><strong>Success:</strong> {{ success }}</p>
                     {% endif %}
                     <h1>Welcome to the AKEB texting web application!</h1>
-                    <p>Use this application to send out text messages to contacts or new numbers for AKEB informational purposes.<p>
-                    
+                    <p>Use this application to send out text messages to contacts or new numbers for AKEB informational purposes.<p> </br>
+                    <form name="text" method="POST">
+                        Input numbers seperated by commas into the text field below:</br>
+                        <textarea name="numbers" cols="95" rows="5" placeholder="212786786,3471234321,347712345"></textarea> </br> </br>
+                        Input text to be sent in the messages:</br>
+                        <textarea name="numbers" cols="95" rows="5" placeholder="This is the text message that will be going to the numbers specified above."></textarea> </br>
+                        <input type="Submit" onclick="return confirm('Are you sure?')"/>
+                    </form>
                 </div>
             </div>
         </div>

@@ -3,16 +3,12 @@ from flask import Flask, render_template, request, session, url_for, redirect
 import hashlib
 import pymysql.cursors
 import datetime
+from secret import *
+
+#conn = pymysql.connect( host= HOST, user= USERNAME, password= PASSWORD, db= DB, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
 
 #Initialize the app from Flask
 app = Flask(__name__)
-
-conn = pymysql.connect( host='us-cdbr-iron-east-03.cleardb.net',
-						user='bfbe58140145b7',
-						password='7a9940e8',
-						db='heroku_81b805a8742a75f',
-						charset='utf8mb4',
-						cursorclass=pymysql.cursors.DictCursor)
 
 #Define a route to hello function
 @app.route('/')
@@ -22,7 +18,7 @@ def hello():
 	return redirect(url_for('index'))
 
 #Define route for index
-@app.route('/index',  methods=['GET', 'POST'])
+@app.route('/index')
 def index():
 	return render_template('index.html')
 	
@@ -36,6 +32,7 @@ def login():
 #Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
+	conn = pymysql.connect( host= HOST, user= USERNAME, password= PASSWORD, db= DB, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
 	#grabs information from the forms
 	username = request.form['username']
 	password = request.form['password'].encode('utf-8')
@@ -52,6 +49,7 @@ def loginAuth():
 	data = cursor.fetchone()
 	#use fetchall() if you are expecting more than 1 data row
 	cursor.close()
+	conn.close()
 	print data
 	if data:
 		#creates a session for the the user
@@ -68,7 +66,10 @@ def loginAuth():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+	if request.method == "POST":
+		print "HEJEKHFKJDKJFS"
 	return render_template('home.html', logged_in = True)
+
 
 @app.route('/construction')
 def construction():
