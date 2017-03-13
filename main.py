@@ -7,6 +7,12 @@ import datetime
 #Initialize the app from Flask
 app = Flask(__name__)
 
+conn = pymysql.connect( host='us-cdbr-iron-east-03.cleardb.net',
+						user='bfbe58140145b7',
+						password='7a9940e8',
+						db='heroku_81b805a8742a75f',
+						charset='utf8mb4',
+						cursorclass=pymysql.cursors.DictCursor)
 
 #Define a route to hello function
 @app.route('/')
@@ -33,16 +39,20 @@ def loginAuth():
 	#grabs information from the forms
 	username = request.form['username']
 	password = request.form['password'].encode('utf-8')
+	print username
+	print password
 	md5password = hashlib.md5(password).hexdigest()
+	print md5password
 	#cursor used to send queries
 	cursor = conn.cursor()
 	#executes query
-	query = 'SELECT * FROM member WHERE username = %s and password = %s'
+	query = 'SELECT * FROM users WHERE username = %s and password = %s'
 	cursor.execute(query, (username, md5password))
 	#stores the results in a variable
 	data = cursor.fetchone()
 	#use fetchall() if you are expecting more than 1 data row
 	cursor.close()
+	print data
 	if data:
 		#creates a session for the the user
 		#session is a built in
@@ -58,16 +68,19 @@ def loginAuth():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-	return render_template('home.html')
+	return render_template('home.html', logged_in = True)
+
+@app.route('/construction')
+def construction():
+	return render_template('construction.html', logged_in = True)
 
 
 @app.route('/logout')
 def logout():
 	session.pop('username')
 	session.pop('logged_in')
-	cursor.close()
 	success = 'logged out!'
-	return render_template('index.html')
+	return redirect(url_for('index'))
 
 
 app.secret_key = 'some key that you will never guess'
