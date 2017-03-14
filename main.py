@@ -3,9 +3,22 @@ from flask import Flask, render_template, request, session, url_for, redirect
 import hashlib
 import pymysql.cursors
 import datetime
-from secret import *
+import os
+import nexmoAPI
+import time
+#from secret import * //No need since in .env file and on heroku
 
 #conn = pymysql.connect( host= HOST, user= USERNAME, password= PASSWORD, db= DB, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+
+#DEFINE VARIABLES
+API_KEY = os.environ.get("API_KEY")
+API_SECRET = os.environ.get("API_SECRET")
+DB = os.environ.get("DB")
+FROM_NUMBER = os.environ.get("FROM_NUMBER")
+HOST = os.environ.get("HOST")
+PASSWORD = os.environ.get("PASSWORD")
+USERNAME = os.environ.get("USERNAME")
+
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -16,6 +29,7 @@ def hello():
 	if session.get('logged_in') is True:
 		return redirect(url_for('home'))
 	return redirect(url_for('index'))
+	
 
 #Define route for index
 @app.route('/index')
@@ -32,14 +46,16 @@ def login():
 #Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
-	conn = pymysql.connect( host= HOST, user= USERNAME, password= PASSWORD, db= DB, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+	try:
+		conn = pymysql.connect( host= HOST, user= USERNAME, password= PASSWORD, db= DB, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+	except:
+		print "Yo you done messed up"
+		error = 'Server connection error - contact site admin'
+		return render_template('login.html', error=error)
 	#grabs information from the forms
 	username = request.form['username']
 	password = request.form['password'].encode('utf-8')
-	print username
-	print password
 	md5password = hashlib.md5(password).hexdigest()
-	print md5password
 	#cursor used to send queries
 	cursor = conn.cursor()
 	#executes query
@@ -50,7 +66,6 @@ def loginAuth():
 	#use fetchall() if you are expecting more than 1 data row
 	cursor.close()
 	conn.close()
-	print data
 	if data:
 		#creates a session for the the user
 		#session is a built in
@@ -67,7 +82,25 @@ def loginAuth():
 @app.route('/home', methods=['GET', 'POST'])
 def home():
 	if request.method == "POST":
-		print "HEJEKHFKJDKJFS"
+		numberstxt = request.form.get('numbers')
+		textMessage = request.form.get('textMessage')
+		numbers = numberstxt.split(',')
+		cost = 0
+		count = 0
+		failures = []
+		for number in numbers:
+			messCost = nexmoAPI.sendText(number, textMessage)
+			if messCost == 0:
+				failures.append(number)
+			else:
+				cost += messCost
+				count += 1
+			time.sleep(1)
+		print "GOT TO HERE!!!!!"
+		print count
+		print cost
+		print failures
+		return render_template('message_sent.html', logged_in = True, count = count, cost = cost, failures = failures)
 	return render_template('home.html', logged_in = True)
 
 
