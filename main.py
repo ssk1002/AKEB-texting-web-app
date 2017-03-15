@@ -24,6 +24,7 @@ USERNAME = os.environ.get("USERNAME")
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 	def do_GET(s):
 #	"""Tell Nexmo that you have recieved the GET request."""
+		print "--HEREdjsfkahsfjksdfal!!!"
 		s.send_response(200)
 		s.send_header("Content-type", "text/html")
 		s.end_headers()
@@ -158,7 +159,9 @@ def construction():
 def incoming():
 	print "HERE!!!"
 	server_class = BaseHTTPServer.HTTPServer
+	print "-HERE1!!!"
 	httpd = server_class(('127.0.0.1', 5000), MyHandler)
+	print "--HERE2!!!"
 	print time.asctime(), "Server Starts - %s:%s" % ('127.0.0.1', 5000)
 	try:
 		httpd.serve_forever()
