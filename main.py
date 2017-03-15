@@ -154,7 +154,7 @@ def construction():
 	return render_template('construction.html', logged_in = True)
 
 
-@app.route('/incoming', methods=['POST'])
+@app.route('/incoming', methods=['GET', 'POST'])
 def incoming():
 	server_class = BaseHTTPServer.HTTPServer
 	httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
