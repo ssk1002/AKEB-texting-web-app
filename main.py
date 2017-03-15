@@ -153,19 +153,24 @@ def construction():
 
 @app.route('/incoming', methods=['GET', 'POST'])
 def incoming():
-	print "HERE!!!"
-	server_class = BaseHTTPServer.HTTPServer
-	print "-HERE1!!!"
-	httpd = server_class(('', 5000), MyHandler)
-	print "--HERE2!!!"
-	print time.asctime(), "Server Starts - %s:%s" % ('', 5000)
-	try:
-		httpd.serve_forever()
-	except:
-		e
-	finally:
-		httpd.server_close()
-	print time.asctime(), "Server Stops - %s:%s" % ('', 5000)
+	if request.method == 'POST':
+		print(request.json)
+		return '', 200
+	else:
+		abort(400)
+#	print "HERE!!!"
+#	server_class = BaseHTTPServer.HTTPServer
+#	print "-HERE1!!!"
+#	httpd = server_class(('', 5000), MyHandler)
+#	print "--HERE2!!!"
+#	print time.asctime(), "Server Starts - %s:%s" % ('', 5000)
+#	try:
+#		httpd.serve_forever()
+#	except:
+#		e
+#	finally:
+#		httpd.server_close()
+#	print time.asctime(), "Server Stops - %s:%s" % ('', 5000)
 
 @app.route('/logout')
 def logout():
