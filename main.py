@@ -156,6 +156,7 @@ def construction():
 
 @app.route('/incoming', methods=['GET', 'POST'])
 def incoming():
+	print "HERE!!!"
 	server_class = BaseHTTPServer.HTTPServer
 	httpd = server_class(('127.0.0.1', 5000), MyHandler)
 	print time.asctime(), "Server Starts - %s:%s" % ('127.0.0.1', 5000)
