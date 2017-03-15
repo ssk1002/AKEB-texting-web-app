@@ -157,14 +157,14 @@ def construction():
 @app.route('/incoming', methods=['GET', 'POST'])
 def incoming():
 	server_class = BaseHTTPServer.HTTPServer
-	httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
-	print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
+	httpd = server_class(('127.0.0.1', 5000), MyHandler)
+	print time.asctime(), "Server Starts - %s:%s" % ('127.0.0.1', 5000)
 	try:
 		httpd.serve_forever()
 	except KeyboardInterrupt:
 		pass
 	httpd.server_close()
-	print time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER)
+	print time.asctime(), "Server Stops - %s:%s" % ('127.0.0.1', 5000)
 
 @app.route('/logout')
 def logout():
