@@ -19,48 +19,7 @@ DB = os.environ.get("DB")
 FROM_NUMBER = os.environ.get("FROM_NUMBER")
 HOST = os.environ.get("HOST")
 PASSWORD = os.environ.get("PASSWORD")
-USERNAME = os.environ.get("USERNAME")
-
-class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-	def do_GET(s):
-#	"""Tell Nexmo that you have recieved the GET request."""
-		print "--HEREdjsfkahsfjksdfal!!!"
-		s.send_response(200)
-		s.send_header("Content-type", "text/html")
-		s.end_headers()
-
-		"""Parse parameters in the GET request"""
-		parsed_path = urlparse(s.path)
-		try:
-				inbound_message = dict([p.split('=') for p in parsed_path[4].split('&')])
-		except:
-				inbound_message = {}
-
-		message = ''
-	#		"""Check the is an inbound message"""
-		if  (not inbound_message.has_key('to') ) or (not inbound_message.has_key('msisdn')) or (not inbound_message.has_key('text')):
-			p ("This is not an inbound message")
-		elif inbound_message.has_key('concat'):
-			"""Deal with a concatenated message"""
-			message_parts = shelve.open( inbound_message['concat-ref'])
-			message_parts[ inbound_message['concat-part']] = inbound_message['text']
-			no_of_parts = len(message_parts)
-			if Integer(inbound_message['concat-total']) == no_of_parts:
-				iterator = iter(message_parts)
-				for i in iterator:
-					message = message_parts[i] + message
-			message_parts.close()
-		elif not message:
-			message = inbound_message['text']
-
-		if ( inbound_message['type'] == 'binary'):
-			print "Do some binary stuff"
-		elif (inbound_message['type'] == 'unicode'):
-			print "Do some unicode stuff"
-		elif message:
-			print ( inbound_message['msisdn'] + " says " + message )
-	
-
+USERNAME = os.environ.get("USERNAME")	
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -153,25 +112,16 @@ def construction():
 
 @app.route('/incoming', methods=['POST'])
 def incoming():
+#	Json looks like
+#	{u'type': u'text', u'message-timestamp': u'2017-03-15 06:10:32', u'messageId': u'0C000000214A3020', u'text': u"It's working!", u'msisdn':
+#		u'13478135351', u'to': u'16202052698', u'keyword': u"IT'S"}
 	if request.method == 'POST':
-		print(request.remote_addr)
-		print(request.json)
+		textJson = request.json
+		print "sent from: " + textJson['msisdn']
+		print "text: " + textJson['text']
 		return '', 200
 	else:
 		abort(400)
-#	print "HERE!!!"
-#	server_class = BaseHTTPServer.HTTPServer
-#	print "-HERE1!!!"
-#	httpd = server_class(('', 5000), MyHandler)
-#	print "--HERE2!!!"
-#	print time.asctime(), "Server Starts - %s:%s" % ('', 5000)
-#	try:
-#		httpd.serve_forever()
-#	except:
-#		e
-#	finally:
-#		httpd.server_close()
-#	print time.asctime(), "Server Stops - %s:%s" % ('', 5000)
 
 @app.route('/logout')
 def logout():
