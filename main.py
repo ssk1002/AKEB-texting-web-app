@@ -151,9 +151,10 @@ def construction():
 	return render_template('construction.html', logged_in = True)
 
 
-@app.route('/incoming', methods=['GET', 'POST'])
+@app.route('/incoming', methods=['POST'])
 def incoming():
 	if request.method == 'POST':
+		print(request.remote_addr)
 		print(request.json)
 		return '', 200
 	else:
