@@ -6,6 +6,8 @@ import datetime
 import os
 import nexmoAPI
 import time
+import BaseHTTPServer
+import urlparse
 #from secret import * //No need since in .env file and on heroku
 
 #conn = pymysql.connect( host= HOST, user= USERNAME, password= PASSWORD, db= DB, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
@@ -18,6 +20,45 @@ FROM_NUMBER = os.environ.get("FROM_NUMBER")
 HOST = os.environ.get("HOST")
 PASSWORD = os.environ.get("PASSWORD")
 USERNAME = os.environ.get("USERNAME")
+
+class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+	def do_GET(s):
+#	"""Tell Nexmo that you have recieved the GET request."""
+		s.send_response(200)
+		s.send_header("Content-type", "text/html")
+		s.end_headers()
+
+		"""Parse parameters in the GET request"""
+		parsed_path = urlparse(s.path)
+		try:
+				inbound_message = dict([p.split('=') for p in parsed_path[4].split('&')])
+		except:
+				inbound_message = {}
+
+		message = ''
+	#		"""Check the is an inbound message"""
+		if  (not inbound_message.has_key('to') ) or (not inbound_message.has_key('msisdn')) or (not inbound_message.has_key('text')):
+			p ("This is not an inbound message")
+		elif inbound_message.has_key('concat'):
+			"""Deal with a concatenated message"""
+			message_parts = shelve.open( inbound_message['concat-ref'])
+			message_parts[ inbound_message['concat-part']] = inbound_message['text']
+			no_of_parts = len(message_parts)
+			if Integer(inbound_message['concat-total']) == no_of_parts:
+				iterator = iter(message_parts)
+				for i in iterator:
+					message = message_parts[i] + message
+			message_parts.close()
+		elif not message:
+			message = inbound_message['text']
+
+		if ( inbound_message['type'] == 'binary'):
+			print "Do some binary stuff"
+		elif (inbound_message['type'] == 'unicode'):
+			print "Do some unicode stuff"
+		elif message:
+			print ( inbound_message['msisdn'] + " says " + message )
+	
 
 
 #Initialize the app from Flask
@@ -81,6 +122,8 @@ def loginAuth():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+	if session.get('logged_in') is not True:
+		return redirect(url_for('index'))
 	if request.method == "POST":
 		numberstxt = request.form.get('numbers')
 		textMessage = request.form.get('textMessage')
@@ -106,11 +149,27 @@ def home():
 
 @app.route('/construction')
 def construction():
+	if session.get('logged_in') is not True:
+		return redirect(url_for('index'))
 	return render_template('construction.html', logged_in = True)
 
 
+@app.route('/incoming', methods=['POST'])
+def incoming():
+	server_class = BaseHTTPServer.HTTPServer
+	httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
+	print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
+	try:
+		httpd.serve_forever()
+	except KeyboardInterrupt:
+		pass
+	httpd.server_close()
+	print time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER)
+
 @app.route('/logout')
 def logout():
+	if session.get('logged_in') is not True:
+		return redirect(url_for('index'))
 	session.pop('username')
 	session.pop('logged_in')
 	success = 'logged out!'
