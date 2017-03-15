@@ -140,10 +140,6 @@ def home():
 				cost += messCost
 				count += 1
 			time.sleep(1)
-		print "GOT TO HERE!!!!!"
-		print count
-		print cost
-		print failures
 		return render_template('message_sent.html', logged_in = True, count = count, cost = cost, failures = failures)
 	return render_template('home.html', logged_in = True)
 
@@ -160,15 +156,16 @@ def incoming():
 	print "HERE!!!"
 	server_class = BaseHTTPServer.HTTPServer
 	print "-HERE1!!!"
-	httpd = server_class(('127.0.0.1', 5000), MyHandler)
+	httpd = server_class(('', 5000), MyHandler)
 	print "--HERE2!!!"
-	print time.asctime(), "Server Starts - %s:%s" % ('127.0.0.1', 5000)
+	print time.asctime(), "Server Starts - %s:%s" % ('', 5000)
 	try:
 		httpd.serve_forever()
-	except KeyboardInterrupt:
-		pass
-	httpd.server_close()
-	print time.asctime(), "Server Stops - %s:%s" % ('127.0.0.1', 5000)
+	except:
+		e
+	finally:
+		httpd.server_close()
+	print time.asctime(), "Server Stops - %s:%s" % ('', 5000)
 
 @app.route('/logout')
 def logout():
