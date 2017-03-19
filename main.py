@@ -133,7 +133,7 @@ def logout():
 	return redirect(url_for('index'))
 
 
-app.secret_key = 'some key that you will never guess'
+app.secret_key = os.urandom(24)
 #Run the app on localhost port 5000
 #debug = True -> you don't have to restart flask
 #for changes to go through, TURN OFF FOR PRODUCTION
