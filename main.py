@@ -120,6 +120,8 @@ def incoming():
 		print "sent from: " + textJson['msisdn']
 		print "text: " + textJson['text']
 		return '', 200
+		#TODO
+#		create a database for the incoming messages and a page to view them
 	else:
 		abort(400)
 
