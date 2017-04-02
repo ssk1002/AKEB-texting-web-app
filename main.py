@@ -137,12 +137,6 @@ def incoming():
 	else:
 		abort(400)
 
-		return '', 200
-		#TODO
-#		create a database for the incoming messages and a page to view them
-	else:
-		abort(400)
-
 
 @app.route('/logout')
 def logout():
