@@ -1,0 +1,7 @@
+Flask==0.10.1
+Jinja2==2.8
+py2app==0.7.3
+PyMySQL==0.7.9
+requests==2.11.1
+requests-toolbelt==0.7.0
+gunicorn==19.6.0
