@@ -76,6 +76,35 @@ def construction():
 	return render_template('construction.html', logged_in = True)
 
 
+<<<<<<< Updated upstream
+=======
+@app.route('/incoming', methods=['POST'])
+def incoming():
+#	Json looks like
+#	{u'type': u'text', u'message-timestamp': u'2017-03-15 06:10:32', u'messageId': u'0C000000214A3020', u'text': u"It's working!", u'msisdn':
+#		u'13478135351', u'to': u'16202052698', u'keyword': u"IT'S"}
+	if request.method == 'POST':
+		textJson = request.json
+		print "sent from: " + textJson['msisdn']
+		print "text: " + textJson['text']
+		#TODO
+		try:
+			conn = pymysql.connect( host= HOST, user= USERNAME, password= PASSWORD, db= DB, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+		except:
+			return "", 200
+		cursor = conn.cursor()
+		#executes query
+		query = "INSERT INTO `in_message` (`number`, `message`, `time`) VALUES (%s, %s, %s)"
+		cursor.execute(query, (textJson['msisdn'], textJson['text'], textJson['message-timestamp']))
+		#stores the results in a variable
+		conn.commit()
+		#use fetchall() if you are expecting more than 1 data row
+		cursor.close()
+		return '', 200
+	else:
+		abort(400)
+
+>>>>>>> Stashed changes
 @app.route('/logout')
 def logout():
 	session.pop('username')
